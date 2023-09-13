@@ -8,4 +8,6 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<ReturnUserDto>;
     findAll(): Promise<User[]>;
     findOne(username: string): Promise<UserDocument | undefined>;
+    findById(id: string): Promise<UserDocument>;
+    editUserList(userId: any, listName: any, action: any, ids: any): Promise<void>;
 }

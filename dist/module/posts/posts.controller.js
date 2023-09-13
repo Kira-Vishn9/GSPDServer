@@ -16,20 +16,23 @@ exports.PostsController = void 0;
 const common_1 = require("@nestjs/common");
 const posts_service_1 = require("./posts.service");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const users_service_1 = require("../users/users.service");
 let PostsController = class PostsController {
-    constructor(postService) {
+    constructor(postService, usersService) {
         this.postService = postService;
+        this.usersService = usersService;
     }
-    createNewPost(data) {
-        return this.postService.create(data);
+    async createNewPost(req, data) {
+        const newPost = await this.postService.create(data);
+        const userId = req.user.userId;
+        await this.usersService.editUserList(userId, 'posts', 'push', [newPost['_id']]);
+        return newPost;
     }
     async getPosts(page = 1, perPage = 25) {
         const skip = (page - 1) * perPage;
         return await this.postService.getPaginatedPosts(skip, perPage);
     }
     async addNewLike(req, postId) {
-        console.log(req.user);
-        console.log(postId);
         const userId = req.user.userId;
         try {
             return await this.postService.targetLike(userId, postId);
@@ -43,10 +46,11 @@ exports.PostsController = PostsController;
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('create'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
 ], PostsController.prototype, "createNewPost", null);
 __decorate([
     (0, common_1.Get)(),
@@ -67,6 +71,7 @@ __decorate([
 ], PostsController.prototype, "addNewLike", null);
 exports.PostsController = PostsController = __decorate([
     (0, common_1.Controller)('post'),
-    __metadata("design:paramtypes", [posts_service_1.PostsService])
+    __metadata("design:paramtypes", [posts_service_1.PostsService,
+        users_service_1.UsersService])
 ], PostsController);
 //# sourceMappingURL=posts.controller.js.map

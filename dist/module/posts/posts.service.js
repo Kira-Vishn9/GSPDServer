@@ -55,6 +55,9 @@ let PostsService = class PostsService {
             throw new Error(error.message);
         }
     }
+    async getMyPosts(ids) {
+        return this.postModel.find(ids);
+    }
 };
 exports.PostsService = PostsService;
 exports.PostsService = PostsService = __decorate([

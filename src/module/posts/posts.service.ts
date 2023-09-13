@@ -44,5 +44,8 @@ export class PostsService {
         }
     }
 
+    async getMyPosts (ids: string[]) {
+        return this.postModel.find(ids)
+    }
 
 }

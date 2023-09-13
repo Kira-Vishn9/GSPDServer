@@ -25,10 +25,12 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { CreatePostDto } from "./dto/create-post.dto";
 import { PostsService } from "./posts.service";
+import { UsersService } from "../users/users.service";
 export declare class PostsController {
     private postService;
-    constructor(postService: PostsService);
-    createNewPost(data: CreatePostDto): Promise<import("./schemas/post.schema").Post>;
+    private usersService;
+    constructor(postService: PostsService, usersService: UsersService);
+    createNewPost(req: any, data: CreatePostDto): Promise<import("./schemas/post.schema").Post>;
     getPosts(page?: number, perPage?: number): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/post.schema").Post> & import("./schemas/post.schema").Post & {
         _id: import("mongoose").Types.ObjectId;
     })[]>;

@@ -11,19 +11,21 @@ const common_1 = require("@nestjs/common");
 const auth_module_1 = require("../auth/auth.module");
 const mongoose_1 = require("@nestjs/mongoose");
 const auth_controller_1 = require("../auth/auth.controller");
-const posts_module_1 = require("../posts/posts.module");
 const posts_controller_1 = require("../posts/posts.controller");
 const comments_module_1 = require("../comments/comments.module");
 const comments_controller_1 = require("../comments/comments.controller");
+const users_module_1 = require("../users/users.module");
+const posts_module_1 = require("../posts/posts.module");
+const users_controller_1 = require("../users/users.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            comments_module_1.CommentsModule, posts_module_1.PostsModule, auth_module_1.AuthModule, mongoose_1.MongooseModule.forRoot('mongodb+srv://KiraAdmin:ytekjdbvsq1@cluster0.s75kmmu.mongodb.net/?retryWrites=true&w=majority')
+            posts_module_1.PostsModule, users_module_1.UsersModule, comments_module_1.CommentsModule, auth_module_1.AuthModule, mongoose_1.MongooseModule.forRoot('mongodb+srv://KiraAdmin:ytekjdbvsq1@cluster0.s75kmmu.mongodb.net/?retryWrites=true&w=majority')
         ],
-        controllers: [auth_controller_1.AuthController, posts_controller_1.PostsController, comments_controller_1.CommentsController],
+        controllers: [auth_controller_1.AuthController, posts_controller_1.PostsController, comments_controller_1.CommentsController, users_controller_1.UsersController],
         providers: [],
     })
 ], AppModule);

@@ -36,4 +36,7 @@ export declare class PostsService {
         _id: import("mongoose").Types.ObjectId;
     }>;
     targetLike(userId: string, postId: string): Promise<any>;
+    getMyPosts(ids: string[]): Promise<(import("mongoose").Document<unknown, {}, Post> & Post & {
+        _id: import("mongoose").Types.ObjectId;
+    })[]>;
 }
