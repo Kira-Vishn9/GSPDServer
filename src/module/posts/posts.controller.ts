@@ -10,9 +10,10 @@ import {UsersService} from "../users/users.service";
 export class PostsController {
     constructor(private postService: PostsService,
                 private usersService: UsersService) {}
+
     @UseGuards(JwtAuthGuard)
     @Post('create')
-    async createNewPost(@Request() req,@Body() data: CreatePostDto) {
+    async createNewPost(@Request() req, @Body() data: CreatePostDto) {
         const newPost= await this.postService.create(data)
         const userId = req.user.userId;
         await this.usersService.editUserList(userId, 'posts', 'push', [newPost['_id']] )
@@ -37,5 +38,12 @@ export class PostsController {
         } catch (error) {
             return { message: error.message };
         }
+    }
+    @UseGuards(JwtAuthGuard)
+    @Get('/profile')
+    async getAllUserPosts(@Request() req) {
+        const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
+        console.log(postsId)
+        return await this.postService.getMyPosts(postsId)
     }
 }

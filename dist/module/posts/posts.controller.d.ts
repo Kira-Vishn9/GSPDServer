@@ -35,4 +35,7 @@ export declare class PostsController {
         _id: import("mongoose").Types.ObjectId;
     })[]>;
     addNewLike(req: any, postId: string): Promise<any>;
+    getAllUserPosts(req: any): Promise<(import("mongoose").Document<unknown, {}, import("./schemas/post.schema").Post> & import("./schemas/post.schema").Post & {
+        _id: import("mongoose").Types.ObjectId;
+    })[]>;
 }

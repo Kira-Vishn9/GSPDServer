@@ -7,13 +7,12 @@ import {CommentsModule} from "../comments/comments.module";
 import {CommentsController} from "../comments/comments.controller";
 import {UsersModule} from "../users/users.module";
 import {PostsModule} from "../posts/posts.module";
-import {UsersController} from "../users/users.controller";
 
 @Module({
   imports: [
       PostsModule, UsersModule, CommentsModule ,AuthModule, MongooseModule.forRoot('mongodb+srv://KiraAdmin:ytekjdbvsq1@cluster0.s75kmmu.mongodb.net/?retryWrites=true&w=majority')
   ],
-  controllers: [AuthController, PostsController, CommentsController, UsersController],
+  controllers: [AuthController, PostsController, CommentsController],
   providers: [],
 })
 export class AppModule {}

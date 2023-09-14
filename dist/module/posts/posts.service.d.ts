@@ -28,7 +28,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 export declare class PostsService {
     private postModel;
     constructor(postModel: Model<Post>);
-    create(createPostDto: CreatePostDto): Promise<Post>;
+    create(data: CreatePostDto): Promise<Post>;
     getPaginatedPosts(skip: number, perPage: number): Promise<(import("mongoose").Document<unknown, {}, Post> & Post & {
         _id: import("mongoose").Types.ObjectId;
     })[]>;

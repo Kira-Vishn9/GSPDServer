@@ -41,6 +41,11 @@ let PostsController = class PostsController {
             return { message: error.message };
         }
     }
+    async getAllUserPosts(req) {
+        const postsId = await this.usersService.findById(req.user.userId).then((data) => { return data.posts; });
+        console.log(postsId);
+        return await this.postService.getMyPosts(postsId);
+    }
 };
 exports.PostsController = PostsController;
 __decorate([
@@ -69,6 +74,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], PostsController.prototype, "addNewLike", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('/profile'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PostsController.prototype, "getAllUserPosts", null);
 exports.PostsController = PostsController = __decorate([
     (0, common_1.Controller)('post'),
     __metadata("design:paramtypes", [posts_service_1.PostsService,

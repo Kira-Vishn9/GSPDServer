@@ -21,8 +21,8 @@ let PostsService = class PostsService {
     constructor(postModel) {
         this.postModel = postModel;
     }
-    async create(createPostDto) {
-        const createdPost = new this.postModel(createPostDto);
+    async create(data) {
+        const createdPost = new this.postModel(data);
         return createdPost.save();
     }
     async getPaginatedPosts(skip, perPage) {
@@ -56,7 +56,7 @@ let PostsService = class PostsService {
         }
     }
     async getMyPosts(ids) {
-        return this.postModel.find(ids);
+        return this.postModel.find({ _id: { $in: ids } });
     }
 };
 exports.PostsService = PostsService;
