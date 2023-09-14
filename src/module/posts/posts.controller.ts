@@ -32,8 +32,8 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     @Post(':postId/like')
     async addNewLike(@Request() req, @Param('postId') postId: string) {
-        // const userId = req.user.userId;
-        // try {
+        const userId = req.user.userId;
+        try {
             return await this.postService.targetLike(userId, postId);
         } catch (error) {
             return { message: error.message };
