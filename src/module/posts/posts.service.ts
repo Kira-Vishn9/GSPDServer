@@ -8,8 +8,8 @@ import {CreatePostDto} from "./dto/create-post.dto";
 export class PostsService {
     constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
-    async create(createPostDto: CreatePostDto): Promise<Post> {
-        const createdPost = new this.postModel(createPostDto);
+    async create(data: CreatePostDto): Promise<Post> {
+        const createdPost = new this.postModel(data);
         return createdPost.save();
     }
 
@@ -43,6 +43,7 @@ export class PostsService {
             throw new Error(error.message);
         }
     }
-
-
+    async getMyPosts(ids: string[]) {
+        return this.postModel.find({ _id: { $in: ids } });
+    }
 }

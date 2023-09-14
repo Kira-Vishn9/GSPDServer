@@ -33,6 +33,17 @@ let UsersService = class UsersService {
     async findOne(username) {
         return this.userModel.findOne({ mail: username });
     }
+    async findById(id) {
+        return await this.userModel.findById(id);
+    }
+    async editUserList(userId, listName, action, ids) {
+        const user = await this.findById(userId);
+        const listForEditing = user[listName];
+        user[listName] = action === 'push'
+            ? [...listForEditing, ...ids]
+            : listForEditing.filter(item => !ids.includes(item.id));
+        await user.save();
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

@@ -2,16 +2,22 @@ import {Body, Controller, Get, Post, UseGuards, Query, Request, Param} from '@ne
 import {CreatePostDto} from "./dto/create-post.dto";
 import {PostsService} from "./posts.service";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {UsersService} from "../users/users.service";
 
 
 
 @Controller('post')
 export class PostsController {
-    constructor(private postService: PostsService) {}
+    constructor(private postService: PostsService,
+                private usersService: UsersService) {}
+
     @UseGuards(JwtAuthGuard)
     @Post('create')
-    createNewPost(@Body() data: CreatePostDto) {
-        return this.postService.create(data)
+    async createNewPost(@Request() req, @Body() data: CreatePostDto) {
+        const newPost= await this.postService.create(data)
+        const userId = req.user.userId;
+        await this.usersService.editUserList(userId, 'posts', 'push', [newPost['_id']] )
+        return newPost
     }
 
     @Get()
@@ -26,13 +32,18 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     @Post(':postId/like')
     async addNewLike(@Request() req, @Param('postId') postId: string) {
-        console.log(req.user)
-        console.log(postId)
         const userId = req.user.userId;
         try {
             return await this.postService.targetLike(userId, postId);
         } catch (error) {
             return { message: error.message };
         }
+    }
+    @UseGuards(JwtAuthGuard)
+    @Get('/profile')
+    async getAllUserPosts(@Request() req) {
+        const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
+        console.log(postsId)
+        return await this.postService.getMyPosts(postsId)
     }
 }
