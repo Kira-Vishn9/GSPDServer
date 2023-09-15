@@ -24,7 +24,7 @@ export class Post {
     like: string[];
 
     @Prop()
-    comments: [];
+    comments: string[];
 
 }
 

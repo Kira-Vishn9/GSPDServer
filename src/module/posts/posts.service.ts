@@ -46,4 +46,10 @@ export class PostsService {
     async getMyPosts(ids: string[]) {
         return this.postModel.find({ _id: { $in: ids } });
     }
+
+    async addNewCommet (idPost, idComment) {
+        const post = await this.postModel.findById(idPost)
+        post.comments.push(idComment[0])
+        return await post.save()
+    }
 }

@@ -5,5 +5,5 @@ export interface CreatePostDto {
     author: string;
     rating: number;
     like: string[];
-    comments: [];
+    comments: string[];
 }
