@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, UseGuards, Query, Request, Param} from '@nestjs/common';
+import {Body, Controller, Get, Post, UseGuards, Query, Request, Param, Delete} from '@nestjs/common';
 import {CreatePostDto} from "./dto/create-post.dto";
 import {PostsService} from "./posts.service";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
@@ -21,6 +21,17 @@ export class PostsController {
         const userId = req.user.userId;
         await this.usersService.editUserList(userId, 'posts', 'push', [newPost['_id']] )
         return newPost
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':postId')
+    async deletePost(@Request() req, @Param('postId') postId: string){
+        const user = await this.usersService.findById(req.user.userId)
+        const postsId = user.posts.map(id => id.toString())
+        if (postsId.includes(postId)){
+            await this.postService.deletePost(postId)
+            return await this.usersService.deletPostId(req.user.userId, postId)
+        }
     }
 
     @Get()
@@ -46,12 +57,11 @@ export class PostsController {
     @Get('/profile')
     async getAllUserPosts(@Request() req) {
         const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
-        console.log(postsId)
         return await this.postService.getMyPosts(postsId)
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post(':postId/create/commet')
+    @Post(':postId/comment')
     async createNewComment(@Request() req, @Body() data: CreateCommentDto, @Param('postId') postId) {
         data.authorId = req.user.userId
         const newComment = await this.commentsService.create(data);

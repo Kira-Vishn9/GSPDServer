@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
+import {Model, ObjectId} from "mongoose";
 import {Post} from "./schemas/post.schema";
 import {CreatePostDto} from "./dto/create-post.dto";
 
@@ -43,7 +43,7 @@ export class PostsService {
             throw new Error(error.message);
         }
     }
-    async getMyPosts(ids: string[]) {
+    async getMyPosts(ids: ObjectId[]) {
         return this.postModel.find({ _id: { $in: ids } });
     }
 
@@ -51,5 +51,9 @@ export class PostsService {
         const post = await this.postModel.findById(idPost)
         post.comments.push(idComment[0])
         return await post.save()
+    }
+
+    async deletePost (id){
+        return this.postModel.deleteOne({_id: id})
     }
 }

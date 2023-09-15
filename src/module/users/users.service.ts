@@ -38,4 +38,24 @@ export class UsersService {
 
         await user.save()
     }
+
+    async deletPostId(id: string, postId: string) {
+        try {
+            const user = await this.findById(id);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            const postIndex = user.posts.findIndex((p) => p.toString() === postId);
+
+            if (postIndex === -1) {
+                throw new Error('Post not found in user.posts');
+            }
+            user.posts.splice(postIndex, 1);
+            await user.save();
+
+            return { message: 'Post removed successfully' };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
