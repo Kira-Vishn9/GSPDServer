@@ -69,6 +69,24 @@ export class PostsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Post(':postId/update')
+    async updatePost(@Request() req, @Body() data: CreatePostDto, @Param('postId') postId) {
+        try {
+            const user = await this.usersService.findById(req.user.userId);
+            const postsId = user.posts.map(id => id.toString());
+
+            if (postsId.includes(postId)) {
+                const result = await this.postService.updatePost(postId, data);
+                return result;
+            } else {
+                return { message: 'Post not found in user posts' };
+            }
+        } catch (error) {
+            return { message: error.message };
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get(':postId')
     async getPost(@Param("postId") postId){
         const post = await this.postService.getPost(postId);

@@ -9,6 +9,9 @@ export class Post {
     title: string;
 
     @Prop()
+    titlePost: string;
+
+    @Prop()
     img: string;
 
     @Prop({index: true})

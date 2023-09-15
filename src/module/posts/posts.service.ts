@@ -56,4 +56,25 @@ export class PostsService {
     async deletePost (id){
         return this.postModel.deleteOne({_id: id})
     }
+
+    async updatePost(postId: string, data: CreatePostDto): Promise<any> {
+        try {
+            const post = await this.postModel.findById(postId);
+            if (!post) {
+                throw new Error('Post not found');
+            }
+
+            post.title = data.title;
+            post.img = data.img;
+            post.type = data.type;
+            post.author = data.author;
+            post.rating = data.rating;
+
+            await post.save();
+
+            return { message: 'Post updated successfully', post };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }

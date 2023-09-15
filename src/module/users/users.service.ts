@@ -58,4 +58,5 @@ export class UsersService {
             throw new Error(error.message);
         }
     }
+
 }
