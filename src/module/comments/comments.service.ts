@@ -13,4 +13,8 @@ export class CommentsService {
         const createdComment = new this.commentModel(createCommentDto);
         return createdComment.save();
     }
+
+    async getAllCommentForPost(ids: string[]){
+        return this.commentModel.find({_id: {$in: ids}});
+    }
 }

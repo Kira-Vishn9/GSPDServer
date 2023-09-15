@@ -3,13 +3,16 @@ import {CreatePostDto} from "./dto/create-post.dto";
 import {PostsService} from "./posts.service";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {UsersService} from "../users/users.service";
+import {CommentsService} from "../comments/comments.service";
+import {CreateCommentDto} from "../comments/dto/create-comment.dto";
 
 
 
 @Controller('post')
 export class PostsController {
     constructor(private postService: PostsService,
-                private usersService: UsersService) {}
+                private usersService: UsersService,
+                private commentsService: CommentsService) {}
 
     @UseGuards(JwtAuthGuard)
     @Post('create')
@@ -45,5 +48,21 @@ export class PostsController {
         const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
         console.log(postsId)
         return await this.postService.getMyPosts(postsId)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':postId/create/commet')
+    async createNewComment(@Request() req, @Body() data: CreateCommentDto, @Param('postId') postId) {
+        data.authorId = req.user.userId
+        const newComment = await this.commentsService.create(data);
+        return await this.postService.addNewCommet(postId, [newComment['_id']]);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':postId')
+    async getPost(@Param("postId") postId){
+        const post = await this.postService.getPost(postId);
+        const comments = await this.commentsService.getAllCommentForPost(post.comments)
+        return {post: post, comments: comments}
     }
 }
