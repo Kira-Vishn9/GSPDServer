@@ -65,6 +65,7 @@ export class PostsService {
             }
 
             post.title = data.title;
+            post.titlePost =data.titlePost;
             post.img = data.img;
             post.type = data.type;
             post.author = data.author;
