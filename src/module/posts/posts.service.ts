@@ -1,4 +1,4 @@
-/**/import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model, ObjectId} from "mongoose";
 import {Post} from "./schemas/post.schema";
@@ -52,14 +52,14 @@ export class PostsService {
             throw new Error('Post not found');
         }
 
-        // Вычислите общий рейтинг на основе значений в rating Map
         let totalRating = 0;
+        let totalRatingCount = 0;
         for (const grade of post.rating.values()) {
             totalRating += grade;
+            totalRatingCount++
         }
 
-        // Обновите поле totalRating и сохраните пост
-        post.totalRating = totalRating;
+        post.totalRating = totalRating / totalRatingCount;
         await post.save();
     }
 
@@ -70,13 +70,10 @@ export class PostsService {
                 throw new Error('Post not found');
             }
 
-            // Обновите рейтинг
             post.rating.set(userId, grade);
 
-            // Сохраните изменения в рейтинге
             await post.save();
 
-            // Обновите общий рейтинг
             await this.updateTotalRating(postId);
 
             return await this.postModel.findById(postId)
@@ -84,32 +81,6 @@ export class PostsService {
             throw new Error(error.message);
         }
     }
-
-
-
-    // async calculateTotalRating(postId: string): Promise<number> {
-    //     try {
-    //         const post = await this.postModel.findById(postId);
-    //         if (!post) {
-    //             throw new Error('Post not found');
-    //         }
-    //
-    //         if (!post.rating) {
-    //             return 0; // Если рейтинг отсутствует, возвращаем 0
-    //         }
-    //
-    //         let totalRating = 0;
-    //
-    //         for (const [userId, grade] of post.rating) {
-    //             totalRating += grade;
-    //         }
-    //
-    //         return totalRating;
-    //     } catch (error) {
-    //         throw new Error(error.message);
-    //     }
-    // }
-
 
     async getMyPosts(ids: ObjectId[]) {
         return this.postModel.find({ _id: { $in: ids } });
