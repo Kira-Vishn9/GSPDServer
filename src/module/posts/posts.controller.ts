@@ -107,8 +107,8 @@ export class PostsController {
             const postsId = user.posts.map(id => id.toString());
 
             if (postsId.includes(postId)) {
-                const result = await this.postService.updatePost(postId, data);
-                return result;
+                return await this.postService.updatePost(postId, data);
+
             } else {
                 return { message: 'Post not found in user posts' };
             }
@@ -121,9 +121,7 @@ export class PostsController {
     @Get(':postId')
     async getPost(@Param("postId") postId){
         const post = await this.postService.getPost(postId);
-        const comments = await this.commentsService.getAllCommentForPost(post.comments)
+        const comments = await this.commentsService.getPaginatedCommentForPost(post.comments, 1, 10)
         return {post: post, comments: comments}
     }
-
-
 }

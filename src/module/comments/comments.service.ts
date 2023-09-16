@@ -7,14 +7,17 @@ import {Comment} from "./schema /comment.schema";
 @Injectable()
 export class CommentsService {
 
-    constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
+          constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
 
     async create( createCommentDto: CreateCommentDto ): Promise<Comment> {
         const createdComment = new this.commentModel(createCommentDto);
         return createdComment.save();
     }
 
-    async getAllCommentForPost(ids: string[]){
-        return this.commentModel.find({_id: {$in: ids}});
+    async getPaginatedCommentForPost(ids: string[], page: number = 1, perPage: number = 3){
+        const startIndex = (page - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        const allComments= await this.commentModel.find({_id: {$in: ids}});
+        return allComments.slice(startIndex, endIndex);
     }
 }

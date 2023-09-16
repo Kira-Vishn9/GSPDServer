@@ -23,6 +23,7 @@ export class PostsService {
             .exec();
     }
 
+
     async getPost(id: number) {
         return await this.postModel.findById(id)
     }
