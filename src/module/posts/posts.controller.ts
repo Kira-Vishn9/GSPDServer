@@ -86,9 +86,6 @@ export class PostsController {
         return await this.postService.getMyFilterPostsType(postsId, type)
     }
 
-
-
-
     @UseGuards(JwtAuthGuard)
     @Post(':postId/comment')
     async createNewComment(@Request() req, @Body() data: CreateCommentDto, @Param('postId') postId) {

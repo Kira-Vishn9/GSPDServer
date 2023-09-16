@@ -1,6 +1,6 @@
 // schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type PostDocument = Post & Document;
 
@@ -24,6 +24,9 @@ export class Post {
     @Prop()
     ratingAuthor: number;
 
+    @Prop()
+    totalRating: number;
+
     @Prop({ type: Map, of: Number, default: {} })
     rating: Map<string, number>;
 
@@ -33,5 +36,6 @@ export class Post {
     @Prop()
     comments: string[];
 }
+
 
 export const PostSchema = SchemaFactory.createForClass(Post);

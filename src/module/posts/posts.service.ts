@@ -46,6 +46,23 @@ export class PostsService {
         }
     }
 
+    async updateTotalRating(postId: string): Promise<void> {
+        const post = await this.postModel.findById(postId);
+        if (!post) {
+            throw new Error('Post not found');
+        }
+
+        // Вычислите общий рейтинг на основе значений в rating Map
+        let totalRating = 0;
+        for (const grade of post.rating.values()) {
+            totalRating += grade;
+        }
+
+        // Обновите поле totalRating и сохраните пост
+        post.totalRating = totalRating;
+        await post.save();
+    }
+
     async targetRating(userId: string, postId: string, grade: number): Promise<any> {
         try {
             const post = await this.postModel.findById(postId);
@@ -53,22 +70,45 @@ export class PostsService {
                 throw new Error('Post not found');
             }
 
-            if (!post.rating) {
-                post.rating = new Map<string, number>();
-            }
+            // Обновите рейтинг
+            post.rating.set(userId, grade);
 
-            if (post.rating && post.rating[userId] !== undefined) {
-                post.rating.set(userId, grade);
-            } else {
-                post.rating.set(userId, grade);
-            }
-
+            // Сохраните изменения в рейтинге
             await post.save();
-            return { message: 'Rating updated successfully', post };
+
+            // Обновите общий рейтинг
+            await this.updateTotalRating(postId);
+
+            return await this.postModel.findById(postId)
         } catch (error) {
             throw new Error(error.message);
         }
     }
+
+
+
+    // async calculateTotalRating(postId: string): Promise<number> {
+    //     try {
+    //         const post = await this.postModel.findById(postId);
+    //         if (!post) {
+    //             throw new Error('Post not found');
+    //         }
+    //
+    //         if (!post.rating) {
+    //             return 0; // Если рейтинг отсутствует, возвращаем 0
+    //         }
+    //
+    //         let totalRating = 0;
+    //
+    //         for (const [userId, grade] of post.rating) {
+    //             totalRating += grade;
+    //         }
+    //
+    //         return totalRating;
+    //     } catch (error) {
+    //         throw new Error(error.message);
+    //     }
+    // }
 
 
     async getMyPosts(ids: ObjectId[]) {

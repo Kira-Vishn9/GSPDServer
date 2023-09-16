@@ -5,6 +5,7 @@ export interface CreatePostDto {
     type: string;
     author: string;
     ratingAuthor: number;
+    totalRating: number;
     rating: Map<string, number>;
     like: string[];
     comments: string[];

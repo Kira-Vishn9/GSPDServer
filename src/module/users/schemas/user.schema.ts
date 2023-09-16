@@ -16,6 +16,13 @@ export class User {
 
     @Prop()
     posts: ObjectId[];
+
+    @Prop({default: 'light'})
+    mode: string
+
+    @Prop({default: 'en'})
+    lan: string
+
 }
 
 
