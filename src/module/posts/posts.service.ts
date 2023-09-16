@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+/**/import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model, ObjectId} from "mongoose";
 import {Post} from "./schemas/post.schema";
@@ -9,7 +9,9 @@ export class PostsService {
     constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
     async create(data: CreatePostDto): Promise<Post> {
-        const createdPost = new this.postModel(data);
+        const createdPost = new this.postModel({
+            ...data,
+            rating: new Map<string, number>()});
         return createdPost.save();
     }
 
@@ -43,11 +45,51 @@ export class PostsService {
             throw new Error(error.message);
         }
     }
+
+    async targetRating(userId: string, postId: string, grade: number): Promise<any> {
+        try {
+            const post = await this.postModel.findById(postId);
+            if (!post) {
+                throw new Error('Post not found');
+            }
+
+            if (!post.rating) {
+                post.rating = new Map<string, number>();
+            }
+
+            if (post.rating && post.rating[userId] !== undefined) {
+                post.rating.set(userId, grade);
+            } else {
+                post.rating.set(userId, grade);
+            }
+
+            await post.save();
+            return { message: 'Rating updated successfully', post };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+
     async getMyPosts(ids: ObjectId[]) {
         return this.postModel.find({ _id: { $in: ids } });
     }
 
-    async addNewCommet (idPost, idComment) {
+    async getMySortPostsDate(ids: ObjectId[], date) {
+        const allPosts = await this.postModel.find({ _id: { $in: ids } });
+        if(date === ':up'){
+        return allPosts.sort((a, b) => a.get('createdAt') - b.get('createdAt'));
+        }else{
+            return allPosts.sort((a, b) => b.get('createdAt') - a.get('createdAt') );
+        }
+    }
+
+    async getMyFilterPostsType(ids: ObjectId[], type: string) {
+        const allPosts = await this.postModel.find({ _id: { $in: ids } });
+        return allPosts.filter(post => post.type === type);
+    }
+
+    async addNewComment (idPost, idComment) {
         const post = await this.postModel.findById(idPost)
         post.comments.push(idComment[0])
         return await post.save()
@@ -63,13 +105,12 @@ export class PostsService {
             if (!post) {
                 throw new Error('Post not found');
             }
-
             post.title = data.title;
             post.titlePost =data.titlePost;
             post.img = data.img;
             post.type = data.type;
             post.author = data.author;
-            post.rating = data.rating;
+            post.ratingAuthor = data.ratingAuthor;
 
             await post.save();
 

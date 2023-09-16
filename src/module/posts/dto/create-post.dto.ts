@@ -4,7 +4,8 @@ export interface CreatePostDto {
     img: string;
     type: string;
     author: string;
-    rating: number;
+    ratingAuthor: number;
+    rating: Map<string, number>;
     like: string[];
     comments: string[];
 }

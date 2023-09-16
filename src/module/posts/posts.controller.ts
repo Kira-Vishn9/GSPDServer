@@ -53,19 +53,48 @@ export class PostsController {
             return { message: error.message };
         }
     }
+
     @UseGuards(JwtAuthGuard)
-    @Get('/profile')
+    @Post(':postId/rating')
+    async addRating(@Request() req, @Body() body, @Param('postId') postId: string) {
+        const userId = req.user.userId;
+        try {
+            return await this.postService.targetRating(userId, postId, body.grade);
+        } catch (error) {
+            return { message: error.message };
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
     async getAllUserPosts(@Request() req) {
         const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
         return await this.postService.getMyPosts(postsId)
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('profile/sort:date')
+    async getMySortPostsUpDate(@Request() req, @Param("date") date) {
+        const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
+        return await this.postService.getMySortPostsDate(postsId, date)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile/filter/:type')
+    async getMyFilterPostsType(@Request() req, @Param("type") type) {
+        const postsId = await this.usersService.findById(req.user.userId).then((data) => {return data.posts})
+        return await this.postService.getMyFilterPostsType(postsId, type)
+    }
+
+
+
+
+    @UseGuards(JwtAuthGuard)
     @Post(':postId/comment')
     async createNewComment(@Request() req, @Body() data: CreateCommentDto, @Param('postId') postId) {
         data.authorId = req.user.userId
         const newComment = await this.commentsService.create(data);
-        return await this.postService.addNewCommet(postId, [newComment['_id']]);
+        return await this.postService.addNewComment(postId, [newComment['_id']]);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -93,4 +122,6 @@ export class PostsController {
         const comments = await this.commentsService.getAllCommentForPost(post.comments)
         return {post: post, comments: comments}
     }
+
+
 }

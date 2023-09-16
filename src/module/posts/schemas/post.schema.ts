@@ -1,7 +1,8 @@
+// schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Document } from 'mongoose';
 
-export type PostDocument = HydratedDocument<Post>;
+export type PostDocument = Post & Document;
 
 @Schema({ timestamps: true })
 export class Post {
@@ -14,21 +15,23 @@ export class Post {
     @Prop()
     img: string;
 
-    @Prop({index: true})
+    @Prop({ index: true })
     type: string;
 
     @Prop()
     author: string;
 
     @Prop()
-    rating: number;
+    ratingAuthor: number;
+
+    @Prop({ type: Map, of: Number, default: {} })
+    rating: Map<string, number>;
 
     @Prop()
     like: string[];
 
     @Prop()
     comments: string[];
-
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
