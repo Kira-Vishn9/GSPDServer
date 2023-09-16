@@ -69,13 +69,9 @@ export class PostsService {
             if (!post) {
                 throw new Error('Post not found');
             }
-
             post.rating.set(userId, grade);
-
             await post.save();
-
             await this.updateTotalRating(postId);
-
             return await this.postModel.findById(postId)
         } catch (error) {
             throw new Error(error.message);
@@ -99,6 +95,33 @@ export class PostsService {
         const allPosts = await this.postModel.find({ _id: { $in: ids } });
         return allPosts.filter(post => post.type === type);
     }
+
+    async getTheMostPopularPost() {
+        const mostPopularGamePost = await this.postModel
+            .find({ type: 'game' })
+            .sort({ totalRating: -1 })
+            .limit(2)
+            .exec();
+
+        const mostPopularBookPost = await this.postModel
+            .find({ type: 'book' })
+            .sort({ totalRating: -1 })
+            .limit(2)
+            .exec();
+
+        const mostPopularMoviePost = await this.postModel
+            .find({ type: 'movie' })
+            .sort({ totalRating: -1 })
+            .limit(2)
+            .exec();
+
+        return {
+            mostPopularGamePost: mostPopularGamePost,
+            mostPopularBookPost: mostPopularBookPost,
+            mostPopularMoviePost: mostPopularMoviePost,
+        };
+    }
+
 
     async addNewComment (idPost, idComment) {
         const post = await this.postModel.findById(idPost)

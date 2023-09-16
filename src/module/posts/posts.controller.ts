@@ -87,6 +87,11 @@ export class PostsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('popular')
+    async getTheMostPopularPost(){
+        return this.postService.getTheMostPopularPost()
+    }
+    @UseGuards(JwtAuthGuard)
     @Post(':postId/comment')
     async createNewComment(@Request() req, @Body() data: CreateCommentDto, @Param('postId') postId) {
         data.authorId = req.user.userId
