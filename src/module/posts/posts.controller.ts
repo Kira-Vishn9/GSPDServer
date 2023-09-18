@@ -8,7 +8,8 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto'
 
 @Controller('post')
 export class PostsController {
-  constructor (private readonly postService: PostsService,
+  constructor (
+    private readonly postService: PostsService,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService) {}
 
