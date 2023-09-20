@@ -13,10 +13,10 @@ export class CommentsService {
     return await createdComment.save()
   }
 
-  async getPaginatedCommentForPost (ids: string[], page: number = 1, perPage: number = 3) {
-    const startIndex = (page - 1) * perPage
-    const endIndex = startIndex + perPage
+  async getPaginatedCommentForPost (ids: string[], page, perPage: number = 5) {
+    const startIndex = (0)
+    const endIndex = page * perPage
     const allComments = await this.commentModel.find({ _id: { $in: ids } })
-    return allComments.slice(startIndex, endIndex)
+    return allComments.reverse().slice(startIndex, endIndex)
   }
 }

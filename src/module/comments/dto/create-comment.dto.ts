@@ -1,4 +1,4 @@
 export interface CreateCommentDto {
-    authorId: string;
-    text: string;
+  authorId: string
+  text: string
 }

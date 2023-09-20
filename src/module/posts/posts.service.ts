@@ -97,21 +97,25 @@ export class PostsService {
     return allPosts.filter(post => post.type === type)
   }
 
+  async getPopular (type, count) {
+    return await this.postModel.find({ type }).limit(count)
+  }
+
   async getTheMostPopularPost () {
     const mostPopularGamePost = await this.postModel
-      .find({ type: 'game' })
+      .find({ type: 'Game' })
       .sort({ totalRating: -1 })
       .limit(2)
       .exec()
 
     const mostPopularBookPost = await this.postModel
-      .find({ type: 'book' })
+      .find({ type: 'Book' })
       .sort({ totalRating: -1 })
       .limit(2)
       .exec()
 
     const mostPopularMoviePost = await this.postModel
-      .find({ type: 'movie' })
+      .find({ type: 'Movie' })
       .sort({ totalRating: -1 })
       .limit(2)
       .exec()

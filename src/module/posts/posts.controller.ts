@@ -85,10 +85,15 @@ export class PostsController {
     return await this.postService.getMyFilterPostsType(postsId, type)
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('popular')
   async getTheMostPopularPost () {
     return await this.postService.getTheMostPopularPost()
+  }
+
+  @Get('popular/:type')
+  async getTheMostPopular (@Param('type') type, @Query('count') count) {
+    console.log(type, count)
+    return await this.postService.getPopular(type, count)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -118,9 +123,9 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':postId')
-  async getPost (@Param('postId') postId) {
+  async getPost (@Param('postId') postId, @Query('page') page) {
     const post = await this.postService.getPost(postId)
-    const comments = await this.commentsService.getPaginatedCommentForPost(post.comments, 1, 10)
+    const comments = await this.commentsService.getPaginatedCommentForPost(post.comments, page, 5)
     return { post, comments }
   }
 }
