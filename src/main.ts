@@ -11,4 +11,5 @@ async function bootstrap (): Promise<void> {
   await app.listen(3000)
 }
 
-bootstrap().then(null)
+bootstrap()
+// http://146.59.16.17:5173
