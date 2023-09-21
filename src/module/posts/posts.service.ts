@@ -16,6 +16,13 @@ export class PostsService {
     return await createdPost.save()
   }
 
+  async getSpecialPost (type: string) {
+    if (type === 'home') {
+      return await this.postModel.find()
+    }
+    return await this.postModel.find({ type })
+  }
+
   async getPaginatedPosts (skip: number, perPage: number) {
     return await this.postModel
       .find()

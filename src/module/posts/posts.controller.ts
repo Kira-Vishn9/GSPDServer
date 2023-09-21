@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common'
-import { CreatePostDto } from './dto/create-post.dto'
-import { PostsService } from './posts.service'
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'
-import { UsersService } from '../users/users.service'
-import { CommentsService } from '../comments/comments.service'
-import { CreateCommentDto } from '../comments/dto/create-comment.dto'
+import {Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards} from '@nestjs/common'
+import {CreatePostDto} from './dto/create-post.dto'
+import {PostsService} from './posts.service'
+import {JwtAuthGuard} from '../auth/jwt-auth.guard'
+import {UsersService} from '../users/users.service'
+import {CommentsService} from '../comments/comments.service'
+import {CreateCommentDto} from '../comments/dto/create-comment.dto'
 
 @Controller('post')
 export class PostsController {
@@ -16,6 +16,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async createNewPost (@Request() req, @Body() data: CreatePostDto) {
+    console.log(data)
     const newPost = await this.postService.create(data)
     const userId = req.user.userId
     await this.usersService.editUserList(userId, 'posts', 'push', [newPost._id])
@@ -127,5 +128,12 @@ export class PostsController {
     const post = await this.postService.getPost(postId)
     const comments = await this.commentsService.getPaginatedCommentForPost(post.comments, page, 5)
     return { post, comments }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/special/:type')
+  async getSpecialPost (@Param('type') type) {
+    const res = await this.postService.getSpecialPost(type)
+    return res
   }
 }
