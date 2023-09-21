@@ -1,10 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards} from '@nestjs/common'
-import {CreatePostDto} from './dto/create-post.dto'
-import {PostsService} from './posts.service'
-import {JwtAuthGuard} from '../auth/jwt-auth.guard'
-import {UsersService} from '../users/users.service'
-import {CommentsService} from '../comments/comments.service'
-import {CreateCommentDto} from '../comments/dto/create-comment.dto'
+import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common'
+import { CreatePostDto } from './dto/create-post.dto'
+import { PostsService } from './posts.service'
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'
+import { UsersService } from '../users/users.service'
+import { CommentsService } from '../comments/comments.service'
+import { CreateCommentDto } from '../comments/dto/create-comment.dto'
 
 @Controller('post')
 export class PostsController {
@@ -16,7 +16,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async createNewPost (@Request() req, @Body() data: CreatePostDto) {
-    console.log(data)
+    console.log('dataPost', data)
     const newPost = await this.postService.create(data)
     const userId = req.user.userId
     await this.usersService.editUserList(userId, 'posts', 'push', [newPost._id])
@@ -93,7 +93,6 @@ export class PostsController {
 
   @Get('popular/:type')
   async getTheMostPopular (@Param('type') type, @Query('count') count) {
-    console.log(type, count)
     return await this.postService.getPopular(type, count)
   }
 
@@ -130,10 +129,15 @@ export class PostsController {
     return { post, comments }
   }
 
+  // @Query('page') page: number = 1,
+  // @Query('perPage') perPage: number = 25
+  // const skip = (page - 1) * perPage
   @UseGuards(JwtAuthGuard)
   @Get('/special/:type')
-  async getSpecialPost (@Param('type') type) {
-    const res = await this.postService.getSpecialPost(type)
+  async getSpecialPost (@Param('type') type,
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 5) {
+    const res = await this.postService.getSpecialPost(type, page, perPage)
     return res
   }
 }

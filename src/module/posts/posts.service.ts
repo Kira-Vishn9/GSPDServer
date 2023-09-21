@@ -16,11 +16,32 @@ export class PostsService {
     return await createdPost.save()
   }
 
-  async getSpecialPost (type: string) {
+  async getSpecialPost (type: string, skip: number, perPage: number) {
+    let postsQuery
+    let res
+
     if (type === 'home') {
-      return await this.postModel.find()
+      postsQuery = this.postModel.find()
+    } else {
+      postsQuery = this.postModel.find({ type })
     }
-    return await this.postModel.find({ type })
+
+    const totalPostsCount = await postsQuery.countDocuments().exec()
+    const totalPages = Math.ceil(totalPostsCount / perPage)
+    if (type === 'home') {
+      res = await this.postModel
+        .find()
+        .skip(skip)
+        .limit(perPage)
+        .exec()
+    } else {
+      res = await this.postModel
+        .find({ type })
+        .skip(skip)
+        .limit(perPage)
+        .exec()
+    }
+    return { res, totalPages }
   }
 
   async getPaginatedPosts (skip: number, perPage: number) {
