@@ -1,5 +1,6 @@
 import { Body, Controller, HttpStatus, Post, Request } from '@nestjs/common'
 import { AuthService } from './auth.service'
+import { type Types } from 'mongoose'
 
 class NewUserDto {
   mail: string
@@ -17,9 +18,8 @@ export class AuthController {
   }
 
   @Post('login')
-  async logIn (@Body() data: NewUserDto, @Request() req): Promise<{ token: { access_token: string }, status: HttpStatus }> {
+  async logIn (@Body() data: NewUserDto, @Request() req): Promise<{ token: { access_token: string, id: Types.ObjectId }, status: HttpStatus }> {
     const response = await this.authService.login(data)
-    console.log(response)
     return { token: response, status: HttpStatus.OK }
   }
 }

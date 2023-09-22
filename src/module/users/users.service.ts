@@ -7,16 +7,12 @@ import { ReturnUserDto } from './dto/return-user.dto'
 
 @Injectable()
 export class UsersService {
-  constructor (@InjectModel(User.name) private readonly UserModel: Model<User>) {}
+  constructor (@InjectModel(User.name) private readonly UserModel: Model<UserDocument>) {}
 
   async create (createUserDto: CreateUserDto): Promise<ReturnUserDto> {
     const createdUser = new this.UserModel(createUserDto)
     const createdDoc = await createdUser.save()
     return new ReturnUserDto(createdDoc)
-  }
-
-  async findAll (): Promise<User[]> {
-    return await this.UserModel.find().exec()
   }
 
   async findOne (username: string): Promise<UserDocument | undefined> {
@@ -28,10 +24,8 @@ export class UsersService {
   }
 
   async editUserList (userId, listName, action, ids) {
-    const user = await this.findById(userId)
-
+    const user = await this.UserModel.findById(userId)
     const listForEditing = user[listName]
-
     user[listName] = action === 'push'
       ? [...listForEditing, ...ids]
       : listForEditing.filter(item => !ids.includes(item.id))

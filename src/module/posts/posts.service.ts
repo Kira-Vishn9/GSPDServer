@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model, type ObjectId } from 'mongoose'
-import { Post, type PostDocument } from './schemas/post.schema'
-import { type CreatePostDto } from './dto/create-post.dto'
+import {Injectable} from '@nestjs/common'
+import {InjectModel} from '@nestjs/mongoose'
+import {Model, type ObjectId} from 'mongoose'
+import {Post, type PostDocument} from './schemas/post.schema'
+import {type CreatePostDto} from './dto/create-post.dto'
 
 @Injectable()
 export class PostsService {
@@ -23,7 +23,7 @@ export class PostsService {
     if (type === 'home') {
       postsQuery = this.postModel.find()
     } else {
-      postsQuery = this.postModel.find({ type })
+      postsQuery = this.postModel.find({type: type})
     }
 
     const totalPostsCount = await postsQuery.countDocuments().exec()
@@ -31,13 +31,13 @@ export class PostsService {
     if (type === 'home') {
       res = await this.postModel
         .find()
-        .skip(skip)
+        .skip(skip - 1)
         .limit(perPage)
         .exec()
     } else {
       res = await this.postModel
         .find({ type })
-        .skip(skip)
+        .skip(skip - 1)
         .limit(perPage)
         .exec()
     }
@@ -57,22 +57,35 @@ export class PostsService {
   }
 
   async targetLike (userId: string, postId: string): Promise<any> {
+    let result
     try {
       const post = await this.postModel.findById(postId)
       if (!post) {
         throw new Error('Post not found')
       }
       const userIndex = post.like.indexOf(userId)
+
       if (userIndex === -1) {
         post.like.push(userId)
+        result = false
       } else {
         post.like.splice(userIndex, 1)
+        result = true
       }
       await post.save()
-      return { message: 'Like operation successful', post }
+      console.log(result)
+      return result
     } catch (error) {
       throw new Error(error.message)
     }
+  }
+
+  async checkLike (userId: string, postId: string) {
+    const post = await this.postModel.findById(postId)
+    if (!post) {
+      throw new Error('Post not found')
+    }
+    return post.like.indexOf(userId) < 0
   }
 
   async updateTotalRating (postId: string): Promise<void> {
@@ -104,6 +117,25 @@ export class PostsService {
       return await this.postModel.findById(postId)
     } catch (error) {
       throw new Error(error.message)
+    }
+  }
+
+  async checkRating (userId: string, postId: string) {
+    try {
+      const post = await this.postModel.findById(postId)
+      if (post && post.rating.has(userId)) {
+
+        const userRating = post.rating.get(userId)
+        console.log(post.rating)
+        console.log(userId)
+        console.log('userrating', userRating)
+        return userRating
+      } else {
+        return 0 // Или другое значение по умолчанию, если рейтинг не найден.
+      }
+    } catch (error) {
+      console.log(error)
+      return 0 // Обработка ошибки и возврат значения по умолчанию.
     }
   }
 
