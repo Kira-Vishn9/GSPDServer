@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './module/app/app.module'
+import {NestFactory} from '@nestjs/core'
+import {AppModule} from './module/app/app.module'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppModule)
@@ -12,4 +12,3 @@ async function bootstrap (): Promise<void> {
 }
 
 bootstrap()
-// http://146.59.16.17:5173
