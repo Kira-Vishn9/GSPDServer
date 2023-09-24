@@ -73,7 +73,6 @@ export class PostsService {
         result = true
       }
       await post.save()
-      console.log(result)
       return result
     } catch (error) {
       throw new Error(error.message)
@@ -125,17 +124,13 @@ export class PostsService {
       const post = await this.postModel.findById(postId)
       if (post && post.rating.has(userId)) {
 
-        const userRating = post.rating.get(userId)
-        console.log(post.rating)
-        console.log(userId)
-        console.log('userrating', userRating)
-        return userRating
+        return post.rating.get(userId)
       } else {
-        return 0 // Или другое значение по умолчанию, если рейтинг не найден.
+        return 0
       }
     } catch (error) {
       console.log(error)
-      return 0 // Обработка ошибки и возврат значения по умолчанию.
+      return 0
     }
   }
 

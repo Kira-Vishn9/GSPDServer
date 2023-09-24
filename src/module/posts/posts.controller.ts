@@ -87,9 +87,9 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getAllUserPosts (@Request() req) {
-    const postsId = await this.usersService.findById(req.headers.userid).then((data) => { return data.posts })
+  @Get('profile/:userId')
+  async getAllUserPosts (@Request() req, @Param('userId') userId: string) {
+    const postsId = await this.usersService.findById(userId).then((data) => { return data.posts })
     return await this.postService.getMyPosts(postsId)
   }
 
@@ -144,7 +144,7 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':postId')
-  async getPost (@Param('postId') postId, @Query('page') page) {
+  async getPost (@Param('postId') postId, @Request() req,@Query('page') page) {
     const post = await this.postService.getPost(postId)
     const comments = await this.commentsService.getPaginatedCommentForPost(post.comments, page, 5)
     return { post, comments }
@@ -152,7 +152,7 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/special/:type')
-  async getSpecialPost (@Param('type') type,
+  async getSpecialPost (@Request() req, @Param('type') type,
     @Query('page') page: number = 1,
     @Query('perPage') perPage: number = 5) {
     const res = await this.postService.getSpecialPost(type, page, perPage)
